@@ -1,0 +1,37 @@
+创建C++插件
+
+
+1.写一个创建工程
+	子类化QQmlExtensionPlugin
+	使用Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid) 注册插件为Qt元对象
+	重写void registerTypes(const char *uri)方法，用qmlRegisterType()注册我们自己定义的给qml使用的类型
+	例子：
+	void MyPluginPlugin::registerTypes(const char *uri)
+	{
+    	// @uri com.mycompany.qmlcomponents
+    	qmlRegisterType<MyItem>(uri, 1, 0, "MyItem");
+	}
+	其中MyItem为我们要在qml中使用的自定义的类型
+	
+	* 写.pro文件
+		TEMPLATE = lib			
+		CONFIG += qt plugin
+		QT += qml
+		SOURCES += 
+		HEADERS +=
+		
+		OTHER_FILES +=  (或者DISTFILES +=) 可以添加qml插件注意要拷贝到生成路径（。。。）
+		
+		
+		
+2.写qmldir文件描述插件
+	module MyModule		(模块名)
+	Clock 1.0 Clock.qml (在qml使用的类型 + 版本 + qml文件)
+	plugin qmlqtimeexampleplugin (c++类型插件)
+	
+	
+3.写一个调用插件的工程
+	在main.cpp 中调用
+	QQmlApplicationEngine engine;
+    engine.addImportPath();			//（注意在main.cpp 加载路径的时候加载的是插件生成路径的上一级文件夹）
+
